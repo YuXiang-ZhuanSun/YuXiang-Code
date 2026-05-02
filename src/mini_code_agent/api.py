@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import socket
+import time
 import urllib.error
 import urllib.request
 from collections.abc import Iterator
@@ -38,29 +40,41 @@ class DeepSeekClient:
             },
         )
 
-        try:
-            with urllib.request.urlopen(req, timeout=120) as resp:
-                while True:
-                    line = resp.readline()
-                    if not line:
-                        break
-                    raw = line.decode("utf-8", errors="replace").strip()
-                    if not raw or not raw.startswith("data:"):
-                        continue
-                    data = raw[5:].strip()
-                    if data == "[DONE]":
-                        break
+        attempts = 3
+        for attempt in range(1, attempts + 1):
+            yielded_content = False
+            try:
+                with urllib.request.urlopen(req, timeout=120) as resp:
+                    while True:
+                        line = resp.readline()
+                        if not line:
+                            break
+                        raw = line.decode("utf-8", errors="replace").strip()
+                        if not raw or not raw.startswith("data:"):
+                            continue
+                        data = raw[5:].strip()
+                        if data == "[DONE]":
+                            break
 
-                    chunk = json.loads(data)
-                    usage = Usage.from_dict(chunk.get("usage")) if chunk.get("usage") else None
-                    choices = chunk.get("choices") or []
-                    if not choices:
-                        yield "", usage
-                        continue
+                        chunk = json.loads(data)
+                        usage = Usage.from_dict(chunk.get("usage")) if chunk.get("usage") else None
+                        choices = chunk.get("choices") or []
+                        if not choices:
+                            yield "", usage
+                            continue
 
-                    delta = choices[0].get("delta") or {}
-                    text = delta.get("content") or ""
-                    yield text, usage
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode("utf-8", errors="replace")
-            raise RuntimeError(f"DeepSeek request failed: HTTP {exc.code}\n{detail}") from exc
+                        delta = choices[0].get("delta") or {}
+                        text = delta.get("content") or ""
+                        if text:
+                            yielded_content = True
+                        yield text, usage
+                return
+            except urllib.error.HTTPError as exc:
+                detail = exc.read().decode("utf-8", errors="replace")
+                raise RuntimeError(f"DeepSeek request failed: HTTP {exc.code}\n{detail}") from exc
+            except (urllib.error.URLError, TimeoutError, socket.timeout, OSError) as exc:
+                if yielded_content:
+                    raise RuntimeError(f"DeepSeek stream interrupted after partial response: {exc}") from exc
+                if attempt == attempts:
+                    raise RuntimeError(f"DeepSeek request failed after {attempts} attempts: {exc}") from exc
+                time.sleep(0.6 * attempt)

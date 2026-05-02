@@ -156,6 +156,10 @@ class Session:
                 mode = "print"
                 ui.assistant_start()
                 print(pending, end="", flush=True)
+        except Exception:
+            if mode == "print":
+                print(flush=True)
+            raise
         finally:
             spin.stop()
         if mode == "print":
@@ -168,7 +172,13 @@ class Session:
         usage_total = Usage()
 
         for _ in range(self.config.max_tool_rounds):
-            answer = self.stream_once(usage_total)
+            try:
+                answer = self.stream_once(usage_total)
+            except RuntimeError as exc:
+                ui.warn(str(exc))
+                if self.messages and self.messages[-1] == {"role": "user", "content": user_text}:
+                    self.messages.pop()
+                return usage_total
             tool_calls = self.parse_tool_calls(answer)
             if not tool_calls:
                 self.messages.append({"role": "assistant", "content": answer})

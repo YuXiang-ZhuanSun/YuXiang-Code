@@ -1,3 +1,7 @@
+<p align="right">
+  <a href="README.md">English</a>
+</p>
+
 <p align="center">
   <img src="assets/yuxiang-code-logo.svg" width="520" alt="YuXiang Code logo">
 </p>
@@ -9,15 +13,12 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a>
-</p>
-
-<p align="center">
-  <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
-  <img alt="API" src="https://img.shields.io/badge/API-OpenAI--compatible-111827">
-  <img alt="Streaming" src="https://img.shields.io/badge/Streaming-TTFT-2563EB">
-  <img alt="Reports" src="https://img.shields.io/badge/Reports-Markdown%20%2B%20CSV-047857">
-  <img alt="Run" src="https://img.shields.io/badge/Run-Local%20CLI-4B5563">
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
+  <img alt="DeepSeek" src="https://img.shields.io/badge/DeepSeek-API-0F172A">
+  <img alt="OpenAI compatible" src="https://img.shields.io/badge/API-OpenAI--compatible-111827">
+  <img alt="Streaming SSE" src="https://img.shields.io/badge/Streaming-SSE-2563EB">
+  <img alt="Local CLI" src="https://img.shields.io/badge/Run-Local%20CLI-4B5563">
+  <img alt="Tools" src="https://img.shields.io/badge/Tools-bash%20%7C%20read%20%7C%20write%20%7C%20edit-047857">
 </p>
 
 <p align="center">
@@ -28,6 +29,14 @@
 
 ## Philosophy
 
+| 取舍 | 原因 |
+|---|---|
+| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> Plan Mode | 用普通的 `PLAN.md` 文件替代。它可见、可版本控制，也能跨会话共享。 |
+| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> MCP integration | 工具描述会真实占用上下文窗口。CLI 工具和 README 通过 `bash` 按需加载即可。 |
+| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> Sub-agents | 在黑盒里再放一个黑盒，会降低可观察性。需要时用 `bash` 调另一个进程。 |
+| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> `maxSteps` ceremony | 循环应该在任务完成时自然结束。只有出现真实问题时，才添加步数限制。 |
+| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> permission theater | 一旦 agent 能写代码并运行代码，虚假的确认弹窗就不是安全模型。保持本地、可见、可检查更重要。 |
+
 YuXiang Code 故意保持很小。它不想变成一个 Agent 操作系统，而是把核心循环留在你眼前：
 
 ```text
@@ -35,16 +44,6 @@ user -> LLM -> tool call -> tool result -> LLM -> done
 ```
 
 重点不是把复杂度藏进另一个框架里，而是让 agent 足够可理解：它运行时，你能看见它在做什么，也能调试它。
-
-有些东西是刻意不做的：
-
-| 刻意不做 | 原因 |
-|---|---|
-| Plan Mode | 用普通的 `PLAN.md` 文件替代。它可见、可版本控制，也能跨会话共享。 |
-| MCP 集成 | 工具描述会真实占用上下文窗口。CLI 工具和 README 通过 `bash` 按需加载即可。 |
-| Sub-agent | 在黑盒里再放一个黑盒，会降低可观察性。需要时用 `bash` 调另一个进程。 |
-| `maxSteps` 仪式 | 循环应该在任务完成时自然结束。只有出现真实问题时，才添加步数限制。 |
-| 权限剧场 | 一旦 agent 能写代码并运行代码，虚假的确认弹窗就不是安全模型。保持本地、可见、可检查更重要。 |
 
 ## 它是什么
 

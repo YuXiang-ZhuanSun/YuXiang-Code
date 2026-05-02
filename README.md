@@ -1,3 +1,7 @@
+<p align="right">
+  <a href="README.zh-CN.md">中文</a>
+</p>
+
 <p align="center">
   <img src="assets/yuxiang-code-logo.svg" width="520" alt="YuXiang Code logo">
 </p>
@@ -9,15 +13,12 @@
 </p>
 
 <p align="center">
-  <a href="README.zh-CN.md">中文</a>
-</p>
-
-<p align="center">
-  <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
-  <img alt="API" src="https://img.shields.io/badge/API-OpenAI--compatible-111827">
-  <img alt="Streaming" src="https://img.shields.io/badge/Streaming-TTFT-2563EB">
-  <img alt="Reports" src="https://img.shields.io/badge/Reports-Markdown%20%2B%20CSV-047857">
-  <img alt="Run" src="https://img.shields.io/badge/Run-Local%20CLI-4B5563">
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
+  <img alt="DeepSeek" src="https://img.shields.io/badge/DeepSeek-API-0F172A">
+  <img alt="OpenAI compatible" src="https://img.shields.io/badge/API-OpenAI--compatible-111827">
+  <img alt="Streaming SSE" src="https://img.shields.io/badge/Streaming-SSE-2563EB">
+  <img alt="Local CLI" src="https://img.shields.io/badge/Run-Local%20CLI-4B5563">
+  <img alt="Tools" src="https://img.shields.io/badge/Tools-bash%20%7C%20read%20%7C%20write%20%7C%20edit-047857">
 </p>
 
 <p align="center">
@@ -28,6 +29,14 @@
 
 ## Philosophy
 
+| Choice | Reason |
+|---|---|
+| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> Plan Mode | Use a plain `PLAN.md` file instead. It is visible, versionable, and shareable across conversations. |
+| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> MCP integration | Tool descriptions can consume real context budget. CLI tools plus README files are loaded through `bash` only when needed. |
+| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> Sub-agents | A hidden agent inside another hidden agent reduces observability. Use `bash` to call another process when you need one. |
+| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> `maxSteps` ceremony | The loop should end naturally when the task is done. Add step limits only when a real problem appears. |
+| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> permission theater | Once an agent can write and run code, fake safety prompts are not a security model. Keep the surface local and inspectable. |
+
 YuXiang Code is intentionally small. It does not try to become an operating system for agents. It keeps the core loop visible:
 
 ```text
@@ -35,16 +44,6 @@ user -> LLM -> tool call -> tool result -> LLM -> done
 ```
 
 The point is not to hide complexity behind another framework. The point is to make the agent understandable enough that you can debug it while it is running.
-
-Some things are deliberately missing:
-
-| Deliberately absent | Why |
-|---|---|
-| Plan Mode | Use a plain `PLAN.md` file instead. It is visible, versionable, and shareable across conversations. |
-| MCP integration | Tool descriptions can consume real context budget. CLI tools plus README files are loaded through `bash` only when needed. |
-| Sub-agents | A hidden agent inside another hidden agent reduces observability. Use `bash` to call another process when you need one. |
-| `maxSteps` ceremony | The loop should end naturally when the task is done. Add step limits only when a real problem appears. |
-| Permission theater | Once an agent can write and run code, fake safety prompts are not a security model. Keep the surface local and inspectable. |
 
 ## What It Is
 

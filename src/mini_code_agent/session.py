@@ -80,6 +80,18 @@ class Session:
             return [direct]
 
         calls: list[tuple[str, dict[str, Any]]] = []
+        for match in re.finditer(
+            r"<tool_call\s+name=[\"'](?P<name>[a-zA-Z_][\w-]*)[\"']\s*>(?P<body>.*?)</tool_call>",
+            text,
+            flags=re.DOTALL,
+        ):
+            try:
+                obj = json.loads(match.group("body").strip())
+            except json.JSONDecodeError:
+                continue
+            if isinstance(obj, dict):
+                calls.append((match.group("name"), self.normalize_tool_args(match.group("name"), obj)))
+
         decoder = json.JSONDecoder()
         index = 0
         while index < len(text):
@@ -95,6 +107,24 @@ class Session:
                 calls.append((obj["tool"], obj["args"]))
             index = start + max(end, 1)
         return calls
+
+    def normalize_tool_args(self, name: str, obj: dict[str, Any]) -> dict[str, Any]:
+        if name == "bash" and isinstance(obj.get("command"), str):
+            return {"command": obj["command"]}
+        if isinstance(obj.get("args"), dict):
+            return obj["args"]
+        if name == "read" and isinstance(obj.get("path"), str):
+            return {"path": obj["path"]}
+        if name == "write" and isinstance(obj.get("path"), str):
+            return {"path": obj["path"], "content": str(obj.get("content", ""))}
+        if name == "edit" and isinstance(obj.get("path"), str):
+            return {
+                "path": obj["path"],
+                "old": str(obj.get("old", "")),
+                "new": str(obj.get("new", "")),
+                "replace_all": bool(obj.get("replace_all", False)),
+            }
+        return obj
 
     def stream_once(self, usage_total: Usage) -> str:
         chunks: list[str] = []

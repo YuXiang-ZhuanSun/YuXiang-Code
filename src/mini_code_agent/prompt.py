@@ -6,7 +6,8 @@ You have four tools:
 - write: write a UTF-8 text file.
 - edit: replace text in a UTF-8 text file.
 
-When you need a tool, output only one compact JSON object and no prose:
+When you need a tool, output only one compact JSON object and no prose.
+Never use XML tags or <tool_call> blocks.
 {"tool":"bash","args":{"command":"pwd"}}
 {"tool":"read","args":{"path":"README.md"}}
 {"tool":"write","args":{"path":"hello.txt","content":"hello"}}

@@ -1,4 +1,17 @@
-__pycache__/
-**/__pycache__/
-*.pyc
-.agent_context.json
+# Ignore everything by default. Keep this repository on a whitelist so
+# agent-created task output folders do not get committed accidentally.
+*
+
+!/.gitignore
+!/code_agent.py
+!/pyproject.toml
+!/README.md
+!/README.zh-CN.md
+!/README.fr.md
+
+!/assets/
+!/assets/yuxiang-code-logo.svg
+
+!/src/
+!/src/mini_code_agent/
+!/src/mini_code_agent/*.py

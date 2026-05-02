@@ -1,6 +1,4 @@
-<p align="right">
-  <a href="README.md">English</a>
-</p>
+[English](README.md) | [中文](README.zh-CN.md) | [Français](README.fr.md)
 
 <p align="center">
   <img src="assets/yuxiang-code-logo.svg" width="520" alt="YuXiang Code logo">
@@ -31,11 +29,11 @@
 
 | 取舍 | 原因 |
 |---|---|
-| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> Plan Mode | 用普通的 `PLAN.md` 文件替代。它可见、可版本控制，也能跨会话共享。 |
-| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> MCP integration | 工具描述会真实占用上下文窗口。CLI 工具和 README 通过 `bash` 按需加载即可。 |
-| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> Sub-agents | 在黑盒里再放一个黑盒，会降低可观察性。需要时用 `bash` 调另一个进程。 |
-| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> `maxSteps` ceremony | 循环应该在任务完成时自然结束。只有出现真实问题时，才添加步数限制。 |
-| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> permission theater | 一旦 agent 能写代码并运行代码，虚假的确认弹窗就不是安全模型。保持本地、可见、可检查更重要。 |
+| <span style="color:#d73a49"><strong>No</strong></span> Plan Mode | 用普通的 `PLAN.md` 文件替代。它可见、可版本控制，也能跨会话共享。 |
+| <span style="color:#d73a49"><strong>No</strong></span> MCP integration | 工具描述会真实占用上下文窗口。CLI 工具和 README 通过 `bash` 按需加载即可。 |
+| <span style="color:#d73a49"><strong>No</strong></span> Sub-agents | 在黑盒里再放一个黑盒，会降低可观察性。需要时用 `bash` 调另一个进程。 |
+| <span style="color:#d73a49"><strong>No</strong></span> `maxSteps` ceremony | 循环应该在任务完成时自然结束。只有出现真实问题时，才添加步数限制。 |
+| <span style="color:#d73a49"><strong>No</strong></span> permission theater | 一旦 agent 能写代码并运行代码，虚假的确认弹窗就不是安全模型。保持本地、可见、可检查更重要。 |
 
 YuXiang Code 故意保持很小。它不想变成一个 Agent 操作系统，而是把核心循环留在你眼前：
 

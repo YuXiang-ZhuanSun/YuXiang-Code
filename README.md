@@ -1,3 +1,5 @@
+[English](README.md) | [中文](README.zh-CN.md) | [Français](README.fr.md)
+
 <p align="right">
   <a href="README.zh-CN.md">中文</a>
 </p>
@@ -31,11 +33,11 @@
 
 | Choice | Reason |
 |---|---|
-| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> Plan Mode | Use a plain `PLAN.md` file instead. It is visible, versionable, and shareable across conversations. |
-| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> MCP integration | Tool descriptions can consume real context budget. CLI tools plus README files are loaded through `bash` only when needed. |
-| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> Sub-agents | A hidden agent inside another hidden agent reduces observability. Use `bash` to call another process when you need one. |
-| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> `maxSteps` ceremony | The loop should end naturally when the task is done. Add step limits only when a real problem appears. |
-| <img alt="No" src="https://img.shields.io/static/v1?label=No&message=&color=red"> permission theater | Once an agent can write and run code, fake safety prompts are not a security model. Keep the surface local and inspectable. |
+| <span style="color:#d73a49"><strong>No</strong></span> Plan Mode | Use a plain `PLAN.md` file instead. It is visible, versionable, and shareable across conversations. |
+| <span style="color:#d73a49"><strong>No</strong></span> MCP integration | Tool descriptions can consume real context budget. CLI tools plus README files are loaded through `bash` only when needed. |
+| <span style="color:#d73a49"><strong>No</strong></span> Sub-agents | A hidden agent inside another hidden agent reduces observability. Use `bash` to call another process when you need one. |
+| <span style="color:#d73a49"><strong>No</strong></span> `maxSteps` ceremony | The loop should end naturally when the task is done. Add step limits only when a real problem appears. |
+| <span style="color:#d73a49"><strong>No</strong></span> permission theater | Once an agent can write and run code, fake safety prompts are not a security model. Keep the surface local and inspectable. |
 
 YuXiang Code is intentionally small. It does not try to become an operating system for agents. It keeps the core loop visible:
 

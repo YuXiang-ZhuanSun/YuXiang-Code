@@ -1,0 +1,14 @@
+<svg width="760" height="260" viewBox="0 0 760 260" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">YuXiang Code</title>
+  <desc id="desc">A hand-drawn terminal logo for YuXiang Code.</desc>
+  <rect width="760" height="260" rx="34" fill="#0B1020"/>
+  <path d="M90 78C102 58 141 50 184 56C230 63 260 84 253 112C247 139 204 151 162 145C119 139 80 112 90 78Z" stroke="#79D7FF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M119 95C139 88 161 88 183 95" stroke="#79D7FF" stroke-width="7" stroke-linecap="round"/>
+  <path d="M128 116L147 130L128 144" stroke="#F8FAFC" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M174 145H211" stroke="#F8FAFC" stroke-width="8" stroke-linecap="round"/>
+  <path d="M111 176C139 199 214 204 246 168" stroke="#79D7FF" stroke-width="6" stroke-linecap="round"/>
+  <path d="M94 184C125 225 231 230 274 180" stroke="#79D7FF" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+  <text x="330" y="116" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="44" font-weight="800">YuXiang Code</text>
+  <text x="332" y="158" fill="#A7B4C8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">LLM + tools + loop</text>
+  <path d="M332 178H626" stroke="#79D7FF" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+</svg>

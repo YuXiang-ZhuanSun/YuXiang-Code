@@ -1,0 +1,22 @@
+[project]
+name = "mini-code-agent"
+version = "0.2.0"
+description = "A tiny streaming DeepSeek code agent with a framed terminal UI."
+requires-python = ">=3.10"
+dependencies = ["prompt_toolkit>=3.0.52", "rich>=13.0.0"]
+
+[project.scripts]
+mini-code-agent = "mini_code_agent.app:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 120

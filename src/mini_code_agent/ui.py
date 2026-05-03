@@ -20,7 +20,9 @@ from rich.table import Table
 from rich.text import Text
 from prompt_toolkit.application import Application
 from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.layout import HSplit, Layout
+from prompt_toolkit.formatted_text import StyleAndTextTuples
+from prompt_toolkit.layout import HSplit, Layout, Window
+from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.styles import Style
 from prompt_toolkit.widgets import Frame, TextArea
 
@@ -235,11 +237,147 @@ def popup(title: str, lines: list[str]) -> None:
     )
 
 
+def interactive_history(title: str, lines: list[str], locked_indices: set[int] | None = None) -> list[int]:
+    if os.getenv("CODE_AGENT_SIMPLE_INPUT") == "1" or not sys.stdin.isatty():
+        popup(title, lines)
+        return []
+
+    locked_indices = locked_indices or set()
+    items = list(enumerate(lines))
+    deleted: list[int] = []
+    selected = 0
+    top = 0
+    visible_count = max(6, min(shutil.get_terminal_size((100, 28)).lines - 8, 18))
+    notice = "↑↓ 选择 · Delete/Backspace 删除 · Esc/q/Enter 退出"
+
+    def clamp_view() -> None:
+        nonlocal selected, top
+        if not items:
+            selected = 0
+            top = 0
+            return
+        selected = max(0, min(selected, len(items) - 1))
+        if selected < top:
+            top = selected
+        if selected >= top + visible_count:
+            top = selected - visible_count + 1
+
+    def make_text() -> StyleAndTextTuples:
+        fragments: StyleAndTextTuples = []
+        if not items:
+            return [("class:empty", "(empty)")]
+
+        bottom = min(len(items), top + visible_count)
+        for row, (original_index, body) in enumerate(items[top:bottom], start=top):
+            is_selected = row == selected
+            is_locked = original_index in locked_indices
+            prefix = ">" if is_selected else " "
+            lock = " locked" if is_locked else ""
+            style = "class:selected" if is_selected else "class:locked" if is_locked else ""
+            lines_for_item = body.splitlines() or [""]
+            first = lines_for_item[0]
+            fragments.append((style, f"{prefix} {first}{lock}\n"))
+            for continuation in lines_for_item[1:]:
+                fragments.append((style, f"  {continuation}\n"))
+        if top > 0:
+            fragments.insert(0, ("class:help", f"... {top} above ...\n"))
+        if bottom < len(items):
+            fragments.append(("class:help", f"... {len(items) - bottom} below ...\n"))
+        return fragments
+
+    control = FormattedTextControl(make_text, focusable=True)
+    window = Window(content=control, wrap_lines=True, always_hide_cursor=True)
+    toolbar = Window(
+        content=FormattedTextControl([("class:help", notice)]),
+        height=1,
+        always_hide_cursor=True,
+    )
+    bindings = KeyBindings()
+
+    @bindings.add("up")
+    def _(event) -> None:
+        nonlocal selected
+        selected -= 1
+        clamp_view()
+        event.app.invalidate()
+
+    @bindings.add("down")
+    def _(event) -> None:
+        nonlocal selected
+        selected += 1
+        clamp_view()
+        event.app.invalidate()
+
+    @bindings.add("pageup")
+    def _(event) -> None:
+        nonlocal selected
+        selected -= visible_count
+        clamp_view()
+        event.app.invalidate()
+
+    @bindings.add("pagedown")
+    def _(event) -> None:
+        nonlocal selected
+        selected += visible_count
+        clamp_view()
+        event.app.invalidate()
+
+    @bindings.add("delete")
+    @bindings.add("backspace")
+    def _(event) -> None:
+        nonlocal selected
+        if not items:
+            event.app.invalidate()
+            return
+        original_index, _ = items[selected]
+        if original_index in locked_indices:
+            event.app.invalidate()
+            return
+        deleted.append(original_index)
+        items.pop(selected)
+        clamp_view()
+        event.app.invalidate()
+
+    @bindings.add("enter")
+    @bindings.add("escape")
+    @bindings.add("q")
+    def _(event) -> None:
+        event.app.exit(result=None)
+
+    root = HSplit(
+        [
+            Frame(
+                HSplit([window, toolbar], padding=0),
+                title=f" {title} ",
+                style="class:history-frame",
+            )
+        ],
+        padding=0,
+    )
+    app = Application(
+        layout=Layout(root, focused_element=window),
+        key_bindings=bindings,
+        full_screen=False,
+        mouse_support=False,
+        style=Style.from_dict(
+            {
+                "history-frame": "ansimagenta",
+                "selected": "reverse",
+                "locked": "ansibrightblack",
+                "empty": "ansibrightblack",
+                "help": "ansibrightblack",
+            }
+        ),
+    )
+    app.run()
+    return deleted
+
+
 def help_text() -> str:
     return """Commands:
   /help              show commands
   /models            show built-in DeepSeek model names
-  /history           show the full active model context
+  /history           browse context; use arrows + Delete/Backspace to drop messages
   /context           alias of /history
   /clear             clear context and prompt history
   /keep [n]          keep only last n context messages

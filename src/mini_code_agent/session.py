@@ -41,6 +41,20 @@ class Session:
             lines.append(f"[{i}] {msg['role']}\n{content}")
         return lines
 
+    def edit_history(self, title: str) -> None:
+        deleted = ui.interactive_history(title, self.context_lines(), locked_indices={0})
+        if not deleted:
+            return
+        removed: list[str] = []
+        for index in sorted(deleted, reverse=True):
+            if index <= 0 or index >= len(self.messages):
+                continue
+            role = self.messages[index]["role"]
+            self.messages.pop(index)
+            removed.append(f"[{index}] {role}")
+        if removed:
+            ui.status("dropped " + ", ".join(reversed(removed)))
+
     def drop_message(self, index: int) -> str:
         if index == 0:
             return "refusing to drop system message; use /system to edit it"
@@ -224,10 +238,10 @@ class Session:
             )
             return True
         if name == "history":
-            ui.popup("history / active context", self.context_lines())
+            self.edit_history("history / active context")
             return True
         if name == "context":
-            ui.popup("context", self.context_lines())
+            self.edit_history("context")
             return True
         if name == "clear":
             self.messages = [{"role": "system", "content": SYSTEM_PROMPT}]

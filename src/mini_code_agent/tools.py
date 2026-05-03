@@ -50,10 +50,11 @@ class LocalTools:
             cmd = [bash_path or "bash", "-lc", command]
             shell_name = "bash"
 
+        timeout = self.config.tool_timeout_seconds
         try:
-            proc = subprocess.run(cmd, cwd=str(self.root), capture_output=True, timeout=90)
+            proc = subprocess.run(cmd, cwd=str(self.root), capture_output=True, timeout=timeout)
         except subprocess.TimeoutExpired:
-            return ToolResult(False, f"Command timed out after 90s: {command}")
+            return ToolResult(False, f"Command timed out after {timeout}s: {command}")
         except Exception as exc:
             return ToolResult(False, f"Command failed to start: {exc}")
 

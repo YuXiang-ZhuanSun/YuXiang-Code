@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import json
+import queue
 import re
 import sys
+import threading
 from typing import Any
 
 from .api import DeepSeekClient
 from .config import Config
-from .models import Message, Usage
+from .models import Message, ToolResult, Usage
 from .prompt import SYSTEM_PROMPT
 from .tools import LocalTools, compact
 from . import ui
@@ -180,6 +182,29 @@ class Session:
             print(flush=True)
         return "".join(chunks)
 
+    def run_tool_with_timeout(self, name: str, args: dict[str, Any]) -> ToolResult:
+        results: queue.Queue[ToolResult] = queue.Queue(maxsize=1)
+
+        def invoke() -> None:
+            try:
+                result = self.tools.run(name, args)
+            except Exception as exc:
+                result = ToolResult(False, f"Tool crashed: {type(exc).__name__}: {exc}")
+            try:
+                results.put_nowait(result)
+            except queue.Full:
+                pass
+
+        thread = threading.Thread(target=invoke, name=f"tool:{name}", daemon=True)
+        thread.start()
+        try:
+            return results.get(timeout=self.config.tool_timeout_seconds)
+        except queue.Empty:
+            return ToolResult(
+                False,
+                f"Tool timed out after {self.config.tool_timeout_seconds}s with no response: {name}",
+            )
+
     def run_turn(self, user_text: str) -> Usage:
         self.history.append(user_text)
         self.messages.append({"role": "user", "content": user_text})
@@ -202,7 +227,12 @@ class Session:
             results: list[str] = []
             for name, args in tool_calls:
                 ui.tool_box(name, json.dumps(args, ensure_ascii=False))
-                result = self.tools.run(name, args)
+                spin = ui.Spinner(f"tool:{name}")
+                spin.start()
+                try:
+                    result = self.run_tool_with_timeout(name, args)
+                finally:
+                    spin.stop()
                 ui.tool_box(f"{name}:result", compact(result.text, 2400))
                 results.append(f"{name} ({'ok' if result.ok else 'failed'}):\n{result.text}")
             self.messages.append({"role": "user", "content": "Tool results:\n\n" + "\n\n".join(results)})

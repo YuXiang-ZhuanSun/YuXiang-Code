@@ -1,9 +1,5 @@
 [English](README.md) | [中文](README.zh-CN.md) | [Français](README.fr.md)
 
-<p align="right">
-  <a href="README.zh-CN.md">中文</a>
-</p>
-
 <p align="center">
   <img src="assets/yuxiang-code-logo.svg" width="520" alt="YuXiang Code logo">
 </p>

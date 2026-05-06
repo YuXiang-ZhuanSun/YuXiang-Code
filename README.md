@@ -74,11 +74,23 @@ Only slash-prefixed commands are interpreted as commands. `history` is normal ch
 /drop INDEX        remove one context message
 /set INDEX text    replace one context message
 /system text       replace the system prompt
-/save              save context to .agent_context.json
+/save [path]       save context to .agent_context.json or a custom path
 /load              load context from .agent_context.json
 /model [name]      show or change model
 /exit              quit
 ```
+
+## Trace Viewer
+
+`/save` writes the exact active model context to `.agent_context.json`. You can render that saved context as a static HTML report:
+
+```powershell
+mini-code-agent-trace .agent_context.json -o trace.html
+```
+
+The report shows message shape, tool calls, tool results, long or truncated content, failed tools, and repeated command patterns. It is meant for comparing harness design changes through the context the model actually received.
+
+The repository includes a complete saved-context example and rendered report under `examples/trace/`.
 
 ## Project Layout
 
@@ -87,16 +99,21 @@ Only slash-prefixed commands are interpreted as commands. `history` is normal ch
 |-- code_agent.py
 |-- pyproject.toml
 |-- assets/
+|-- examples/
+|   `-- trace/
 `-- src/
-    `-- mini_code_agent/
-        |-- api.py
-        |-- app.py
-        |-- config.py
-        |-- models.py
-        |-- prompt.py
-        |-- session.py
-        |-- tools.py
-        `-- ui.py
+    |-- mini_code_agent/
+    |   |-- api.py
+    |   |-- app.py
+    |   |-- config.py
+    |   |-- models.py
+    |   |-- prompt.py
+    |   |-- session.py
+    |   |-- tools.py
+    |   `-- ui.py
+    `-- trace_analysis/
+        |-- __init__.py
+        `-- viewer.py
 ```
 
 ## License

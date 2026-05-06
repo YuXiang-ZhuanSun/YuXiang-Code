@@ -5,6 +5,7 @@ import queue
 import re
 import sys
 import threading
+from pathlib import Path
 from typing import Any
 
 from .api import DeepSeekClient
@@ -23,10 +24,20 @@ class Session:
         self.messages: list[Message] = [{"role": "system", "content": SYSTEM_PROMPT}]
         self.history: list[str] = []
 
-    def save(self) -> str:
+    def resolve_context_path(self, path: str | None = None) -> Path:
+        if not path:
+            return self.config.context_path
+        p = Path(path).expanduser()
+        if not p.is_absolute():
+            p = self.config.root / p
+        return p.resolve()
+
+    def save(self, path: str | None = None) -> str:
+        context_path = self.resolve_context_path(path)
         payload = {"model": self.config.model, "messages": self.messages, "history": self.history}
-        self.config.context_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-        return f"saved {self.config.context_path}"
+        context_path.parent.mkdir(parents=True, exist_ok=True)
+        context_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        return f"saved {context_path}"
 
     def load(self) -> str:
         if not self.config.context_path.exists():
@@ -300,7 +311,8 @@ class Session:
             ui.status(self.set_system(content))
             return True
         if name == "save":
-            ui.status(self.save())
+            path = cmd.split(maxsplit=1)[1] if len(parts) > 1 else None
+            ui.status(self.save(path))
             return True
         if name == "load":
             ui.status(self.load())

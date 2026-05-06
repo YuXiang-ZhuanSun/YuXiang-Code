@@ -1,0 +1,1212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YuXiang Code Trace</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f7f8fa;
+  --panel: #ffffff;
+  --text: #1d2433;
+  --muted: #657083;
+  --line: #d8dee8;
+  --user: #0f766e;
+  --assistant: #315f9d;
+  --system: #6d5a12;
+  --tool: #8b4c13;
+  --bad: #b42318;
+  --ok: #16794c;
+  --warn: #9a5b00;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+header {
+  padding: 28px 32px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+h1 { margin: 0 0 6px; font-size: 26px; letter-spacing: 0; }
+.subtle { color: var(--muted); }
+main { max-width: 1180px; margin: 0 auto; padding: 24px; }
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.metric {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+.metric-value { font-size: 24px; font-weight: 700; }
+.metric-label { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+.metric-hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
+.diagnosis {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+}
+.diagnosis h2 { margin: 0 0 8px; font-size: 16px; }
+.diagnosis ul { margin: 0; padding-left: 20px; }
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+}
+.message {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left-width: 5px;
+  border-radius: 8px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+.message.system { border-left-color: var(--system); }
+.message.user { border-left-color: var(--user); }
+.message.assistant { border-left-color: var(--assistant); }
+summary {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+.index, .meta, .summary-text { color: var(--muted); }
+.summary-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.role { font-weight: 700; }
+.pill {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #edf1f7;
+  color: #334155;
+}
+.pill.tool { background: #fff1dc; color: var(--tool); }
+.pill.ok { background: #dcfce7; color: var(--ok); }
+.pill.failed, .pill.unknown { background: #fee2e2; color: var(--bad); }
+.pill.warn { background: #fff7d6; color: var(--warn); }
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 13px/1.45 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+.content {
+  border-top: 1px solid var(--line);
+  padding: 14px;
+  background: #fbfcfe;
+}
+.tool-card {
+  margin: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.tool-card.failed { border-color: #f0b4af; }
+.tool-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  background: #f8fafc;
+  color: var(--muted);
+}
+.tool-card pre { padding: 10px; background: #ffffff; }
+.hidden { display: none; }
+@media (max-width: 720px) {
+  header { padding: 22px 18px 14px; }
+  main { padding: 16px; }
+  summary { grid-template-columns: auto auto 1fr; }
+  .meta { display: none; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>YuXiang Code Trace</h1>
+  <div class="subtle">Source: examples\trace\deepseek-multiturn.agent_context.json · Model: deepseek-chat · Roles: assistant: 5, system: 1, user: 5</div>
+</header>
+<main>
+  <section class="metrics">
+    
+    <div class="metric">
+      <div class="metric-value">11</div>
+      <div class="metric-label">messages</div>
+      
+    </div>
+    
+    
+    <div class="metric">
+      <div class="metric-value">2</div>
+      <div class="metric-label">history</div>
+      
+    </div>
+    
+    
+    <div class="metric">
+      <div class="metric-value">16551</div>
+      <div class="metric-label">chars</div>
+      
+    </div>
+    
+    
+    <div class="metric">
+      <div class="metric-value">3</div>
+      <div class="metric-label">tool calls</div>
+      
+    </div>
+    
+    
+    <div class="metric">
+      <div class="metric-value">3</div>
+      <div class="metric-label">tool results</div>
+      
+    </div>
+    
+    
+    <div class="metric">
+      <div class="metric-value">0</div>
+      <div class="metric-label">failed tools</div>
+      
+    </div>
+    
+    
+    <div class="metric">
+      <div class="metric-value">1</div>
+      <div class="metric-label">truncated</div>
+      
+    </div>
+    
+    
+    <div class="metric">
+      <div class="metric-value">[9]</div>
+      <div class="metric-label">longest</div>
+      <div class="metric-hint">8052 chars</div>
+    </div>
+    
+  </section>
+  <section class="diagnosis">
+    <h2>Harness Signals</h2>
+    <ul><li>1 message(s) contain truncated tool output.</li><li>1 message(s) are longer than 8k characters and may dominate context budget.</li></ul>
+  </section>
+  <div class="toolbar">
+    <input id="filter" type="search" placeholder="Filter messages, tool names, commands, output...">
+  </div>
+  <section id="messages">
+    
+    <details class="message system" open>
+      <summary>
+        <span class="index">[0]</span>
+        <span class="role">system</span>
+        <span class="summary-text">You are a local code agent running in a terminal UI. You have four tools: - bash: run a shell command in the project root. - read: read a UTF-8 text file. - write: write a UTF-8 te...</span>
+        <span class="meta">812 chars · 19 lines</span>
+        
+      </summary>
+      
+      
+      <pre class="content">You are a local code agent running in a terminal UI.
+
+You have four tools:
+- bash: run a shell command in the project root.
+- read: read a UTF-8 text file.
+- write: write a UTF-8 text file.
+- edit: replace text in a UTF-8 text file.
+
+When you need a tool, output only one compact JSON object and no prose.
+Never use XML tags or &lt;tool_call&gt; blocks.
+{&quot;tool&quot;:&quot;bash&quot;,&quot;args&quot;:{&quot;command&quot;:&quot;pwd&quot;}}
+{&quot;tool&quot;:&quot;read&quot;,&quot;args&quot;:{&quot;path&quot;:&quot;README.md&quot;}}
+{&quot;tool&quot;:&quot;write&quot;,&quot;args&quot;:{&quot;path&quot;:&quot;hello.txt&quot;,&quot;content&quot;:&quot;hello&quot;}}
+{&quot;tool&quot;:&quot;edit&quot;,&quot;args&quot;:{&quot;path&quot;:&quot;hello.txt&quot;,&quot;old&quot;:&quot;hello&quot;,&quot;new&quot;:&quot;hi&quot;,&quot;replace_all&quot;:false}}
+
+After a tool result is returned, continue working. When the task is complete,
+answer normally and concisely. Prefer Chinese for user-facing text. Inspect
+files before editing them. Keep changes small and explain what changed.
+</pre>
+    </details>
+    
+
+    <details class="message user" open>
+      <summary>
+        <span class="index">[1]</span>
+        <span class="role">user</span>
+        <span class="summary-text">Inspect README.md first. Summarize what this project says about harness design and observability. Use tools before answering.</span>
+        <span class="meta">125 chars · 1 lines</span>
+        
+      </summary>
+      
+      
+      <pre class="content">Inspect README.md first. Summarize what this project says about harness design and observability. Use tools before answering.</pre>
+    </details>
+    
+
+    <details class="message assistant" open>
+      <summary>
+        <span class="index">[2]</span>
+        <span class="role">assistant</span>
+        <span class="summary-text">{&quot;tool&quot;:&quot;read&quot;,&quot;args&quot;:{&quot;path&quot;:&quot;README.md&quot;}}</span>
+        <span class="meta">43 chars · 1 lines</span>
+        
+      </summary>
+      
+    <div class="tool-card">
+      <div class="tool-head"><span class="pill tool">read</span><span>tool call</span></div>
+      <pre>{
+  &quot;path&quot;: &quot;README.md&quot;
+}</pre>
+    </div>
+    
+      
+      <pre class="content">{&quot;tool&quot;:&quot;read&quot;,&quot;args&quot;:{&quot;path&quot;:&quot;README.md&quot;}}</pre>
+    </details>
+    
+
+    <details class="message user">
+      <summary>
+        <span class="index">[3]</span>
+        <span class="role">user</span>
+        <span class="summary-text">Tool results: read (ok): C:\Users\Xiang\Documents\New project\README.md [English](README.md) | [中文](README.zh-CN.md) | [Français](README.fr.md) &lt;p align=&quot;center&quot;&gt; &lt;img src=&quot;assets/...</span>
+        <span class="meta">4657 chars · 127 lines</span>
+        
+      </summary>
+      
+      
+    <div class="tool-card ok">
+      <div class="tool-head"><span class="pill ok">ok</span><span>read result</span></div>
+      <pre>C:\Users\Xiang\Documents\New project\README.md
+
+[English](README.md) | [中文](README.zh-CN.md) | [Français](README.fr.md)
+
+&lt;p align=&quot;center&quot;&gt;
+  &lt;img src=&quot;assets/yuxiang-code-logo.svg&quot; width=&quot;520&quot; alt=&quot;YuXiang Code logo&quot;&gt;
+&lt;/p&gt;
+
+&lt;h1 align=&quot;center&quot;&gt;YuXiang Code&lt;/h1&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+  &lt;strong&gt;An autonomous agent is just an LLM + tools + a loop.&lt;/strong&gt;
+&lt;/p&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+  &lt;img alt=&quot;Python 3.10+&quot; src=&quot;https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&amp;logoColor=white&quot;&gt;
+  &lt;img alt=&quot;DeepSeek&quot; src=&quot;https://img.shields.io/badge/DeepSeek-API-0F172A&quot;&gt;
+  &lt;img alt=&quot;OpenAI compatible&quot; src=&quot;https://img.shields.io/badge/API-OpenAI--compatible-111827&quot;&gt;
+  &lt;img alt=&quot;Streaming SSE&quot; src=&quot;https://img.shields.io/badge/Streaming-SSE-2563EB&quot;&gt;
+  &lt;img alt=&quot;Local CLI&quot; src=&quot;https://img.shields.io/badge/Run-Local%20CLI-4B5563&quot;&gt;
+  &lt;img alt=&quot;Tools&quot; src=&quot;https://img.shields.io/badge/Tools-bash%20%7C%20read%20%7C%20write%20%7C%20edit-047857&quot;&gt;
+&lt;/p&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+  A tiny, inspectable code agent for people who prefer plain files, visible tool calls, and boring loops that actually work.
+&lt;/p&gt;
+
+---
+
+## Philosophy
+
+| Choice | Reason |
+|---|---|
+| &lt;span style=&quot;color:#d73a49&quot;&gt;&lt;strong&gt;No&lt;/strong&gt;&lt;/span&gt; Plan Mode | Use a plain `PLAN.md` file instead. It is visible, versionable, and shareable across conversations. |
+| &lt;span style=&quot;color:#d73a49&quot;&gt;&lt;strong&gt;No&lt;/strong&gt;&lt;/span&gt; MCP integration | Tool descriptions can consume real context budget. CLI tools plus README files are loaded through `bash` only when needed. |
+| &lt;span style=&quot;color:#d73a49&quot;&gt;&lt;strong&gt;No&lt;/strong&gt;&lt;/span&gt; Sub-agents | A hidden agent inside another hidden agent reduces observability. Use `bash` to call another process when you need one. |
+| &lt;span style=&quot;color:#d73a49&quot;&gt;&lt;strong&gt;No&lt;/strong&gt;&lt;/span&gt; `maxSteps` ceremony | The loop should end naturally when the task is done. Add step limits only when a real problem appears. |
+| &lt;span style=&quot;color:#d73a49&quot;&gt;&lt;strong&gt;No&lt;/strong&gt;&lt;/span&gt; permission theater | Once an agent can write and run code, fake safety prompts are not a security model. Keep the surface local and inspectable. |
+
+YuXiang Code is intentionally small. It does not try to become an operating system for agents. It keeps the core loop visible:
+
+```text
+user -&gt; LLM -&gt; tool call -&gt; tool result -&gt; LLM -&gt; done
+```
+
+The point is not to hide complexity behind another framework. The point is to make the agent understandable enough that you can debug it while it is running.
+
+## What It Is
+
+- Streaming terminal chat with visible tool calls.
+- Local tools for `bash`, `read`, `write`, and `edit`.
+- Manual context controls so you can inspect, trim, save, and rewrite the exact model context.
+- A local-first CLI, not a hosted agent platform.
+
+That is the product. Everything else has to earn its place.
+
+## Quick Start
+
+```powershell
+$env:DEEPSEEK_API_KEY=&quot;your-key&quot;
+python -m pip install -e .
+python .\code_agent.py
+```
+
+## Commands
+
+Only slash-prefixed commands are interpreted as commands. `history` is normal chat text; `/history` opens the active context panel.
+
+```text
+/help              show commands
+/models            show built-in DeepSeek model names
+/history           show the full active model context
+/context           alias of /history
+/clear             clear context and prompt history
+/keep [n]          keep only last n context messages
+/drop INDEX        remove one context message
+/set INDEX text    replace one context message
+/system text       replace the system prompt
+/save [path]       save context to .agent_context.json or a custom path
+/load              load context from .agent_context.json
+/model [name]      show or change model
+/exit              quit
+```
+
+## Trace Viewer
+
+`/save` writes the exact active model context to `.agent_context.json`. You can render that saved context as a static HTML report:
+
+```powershell
+mini-code-agent-trace .agent_context.json -o trace.html
+```
+
+The report shows message shape, tool calls, tool results, long or truncated content, failed tools, and repeated command patterns. It is meant for comparing harness design changes through the context the model actually received.
+
+The repository includes a complete saved-context example and rendered report under `examples/trace/`.
+
+## Project Layout
+
+```text
+.
+|-- code_agent.py
+|-- pyproject.toml
+|-- assets/
+|-- examples/
+|   `-- trace/
+`-- src/
+    |-- mini_code_agent/
+    |   |-- api.py
+    |   |-- app.py
+    |   |-- config.py
+    |   |-- models.py
+    |   |-- prompt.py
+    |   |-- session.py
+    |   |-- tools.py
+    |   `-- ui.py
+    `-- trace_analysis/
+        |-- __init__.py
+        `-- viewer.py
+```
+
+## License
+
+MIT</pre>
+    </div>
+    
+      <pre class="content">Tool results:
+
+read (ok):
+C:\Users\Xiang\Documents\New project\README.md
+
+[English](README.md) | [中文](README.zh-CN.md) | [Français](README.fr.md)
+
+&lt;p align=&quot;center&quot;&gt;
+  &lt;img src=&quot;assets/yuxiang-code-logo.svg&quot; width=&quot;520&quot; alt=&quot;YuXiang Code logo&quot;&gt;
+&lt;/p&gt;
+
+&lt;h1 align=&quot;center&quot;&gt;YuXiang Code&lt;/h1&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+  &lt;strong&gt;An autonomous agent is just an LLM + tools + a loop.&lt;/strong&gt;
+&lt;/p&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+  &lt;img alt=&quot;Python 3.10+&quot; src=&quot;https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&amp;logoColor=white&quot;&gt;
+  &lt;img alt=&quot;DeepSeek&quot; src=&quot;https://img.shields.io/badge/DeepSeek-API-0F172A&quot;&gt;
+  &lt;img alt=&quot;OpenAI compatible&quot; src=&quot;https://img.shields.io/badge/API-OpenAI--compatible-111827&quot;&gt;
+  &lt;img alt=&quot;Streaming SSE&quot; src=&quot;https://img.shields.io/badge/Streaming-SSE-2563EB&quot;&gt;
+  &lt;img alt=&quot;Local CLI&quot; src=&quot;https://img.shields.io/badge/Run-Local%20CLI-4B5563&quot;&gt;
+  &lt;img alt=&quot;Tools&quot; src=&quot;https://img.shields.io/badge/Tools-bash%20%7C%20read%20%7C%20write%20%7C%20edit-047857&quot;&gt;
+&lt;/p&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+  A tiny, inspectable code agent for people who prefer plain files, visible tool calls, and boring loops that actually work.
+&lt;/p&gt;
+
+---
+
+## Philosophy
+
+| Choice | Reason |
+|---|---|
+| &lt;span style=&quot;color:#d73a49&quot;&gt;&lt;strong&gt;No&lt;/strong&gt;&lt;/span&gt; Plan Mode | Use a plain `PLAN.md` file instead. It is visible, versionable, and shareable across conversations. |
+| &lt;span style=&quot;color:#d73a49&quot;&gt;&lt;strong&gt;No&lt;/strong&gt;&lt;/span&gt; MCP integration | Tool descriptions can consume real context budget. CLI tools plus README files are loaded through `bash` only when needed. |
+| &lt;span style=&quot;color:#d73a49&quot;&gt;&lt;strong&gt;No&lt;/strong&gt;&lt;/span&gt; Sub-agents | A hidden agent inside another hidden agent reduces observability. Use `bash` to call another process when you need one. |
+| &lt;span style=&quot;color:#d73a49&quot;&gt;&lt;strong&gt;No&lt;/strong&gt;&lt;/span&gt; `maxSteps` ceremony | The loop should end naturally when the task is done. Add step limits only when a real problem appears. |
+| &lt;span style=&quot;color:#d73a49&quot;&gt;&lt;strong&gt;No&lt;/strong&gt;&lt;/span&gt; permission theater | Once an agent can write and run code, fake safety prompts are not a security model. Keep the surface local and inspectable. |
+
+YuXiang Code is intentionally small. It does not try to become an operating system for agents. It keeps the core loop visible:
+
+```text
+user -&gt; LLM -&gt; tool call -&gt; tool result -&gt; LLM -&gt; done
+```
+
+The point is not to hide complexity behind another framework. The point is to make the agent understandable enough that you can debug it while it is running.
+
+## What It Is
+
+- Streaming terminal chat with visible tool calls.
+- Local tools for `bash`, `read`, `write`, and `edit`.
+- Manual context controls so you can inspect, trim, save, and rewrite the exact model context.
+- A local-first CLI, not a hosted agent platform.
+
+That is the product. Everything else has to earn its place.
+
+## Quick Start
+
+```powershell
+$env:DEEPSEEK_API_KEY=&quot;your-key&quot;
+python -m pip install -e .
+python .\code_agent.py
+```
+
+## Commands
+
+Only slash-prefixed commands are interpreted as commands. `history` is normal chat text; `/history` opens the active context panel.
+
+```text
+/help              show commands
+/models            show built-in DeepSeek model names
+/history           show the full active model context
+/context           alias of /history
+/clear             clear context and prompt history
+/keep [n]          keep only last n context messages
+/drop INDEX        remove one context message
+/set INDEX text    replace one context message
+/system text       replace the system prompt
+/save [path]       save context to .agent_context.json or a custom path
+/load              load context from .agent_context.json
+/model [name]      show or change model
+/exit              quit
+```
+
+## Trace Viewer
+
+`/save` writes the exact active model context to `.agent_context.json`. You can render that saved context as a static HTML report:
+
+```powershell
+mini-code-agent-trace .agent_context.json -o trace.html
+```
+
+The report shows message shape, tool calls, tool results, long or truncated content, failed tools, and repeated command patterns. It is meant for comparing harness design changes through the context the model actually received.
+
+The repository includes a complete saved-context example and rendered report under `examples/trace/`.
+
+## Project Layout
+
+```text
+.
+|-- code_agent.py
+|-- pyproject.toml
+|-- assets/
+|-- examples/
+|   `-- trace/
+`-- src/
+    |-- mini_code_agent/
+    |   |-- api.py
+    |   |-- app.py
+    |   |-- config.py
+    |   |-- models.py
+    |   |-- prompt.py
+    |   |-- session.py
+    |   |-- tools.py
+    |   `-- ui.py
+    `-- trace_analysis/
+        |-- __init__.py
+        `-- viewer.py
+```
+
+## License
+
+MIT
+</pre>
+    </details>
+    
+
+    <details class="message assistant">
+      <summary>
+        <span class="index">[4]</span>
+        <span class="role">assistant</span>
+        <span class="summary-text">## 项目摘要：关于 Harness 设计与可观测性 ### 核心理念 该项目 **YuXiang Code** 是一个极简、可审查的本地代码代理（code agent），其设计哲学围绕 **&quot;保持可见、保持简单&quot;** 展开。README 明确反对常见的复杂化倾向，并给出了具体理由： | 拒绝的选项 | 理由 | |---|---| | ❌ Plan Mod...</span>
+        <span class="meta">1031 chars · 24 lines</span>
+        
+      </summary>
+      
+      
+      <pre class="content">## 项目摘要：关于 Harness 设计与可观测性
+
+### 核心理念
+
+该项目 **YuXiang Code** 是一个极简、可审查的本地代码代理（code agent），其设计哲学围绕 **&quot;保持可见、保持简单&quot;** 展开。README 明确反对常见的复杂化倾向，并给出了具体理由：
+
+| 拒绝的选项 | 理由 |
+|---|---|
+| ❌ Plan Mode（计划模式） | 改用纯文本 `PLAN.md`，可见、可版本控制、可跨对话共享。 |
+| ❌ MCP 集成 | 工具描述会消耗宝贵的上下文预算，CLI 工具 + README 文件只在需要时通过 `bash` 加载。 |
+| ❌ 子代理（Sub-agents） | 一个隐藏代理套在另一个隐藏代理里会降低可观测性。需要时直接用 `bash` 调用另一个进程。 |
+| ❌ `maxSteps` 仪式 | 循环应在任务完成时自然结束，只在真正出问题时才加步数限制。 |
+| ❌ 权限表演（permission theater） | 一旦代理能写代码和运行代码，虚假的安全提示就不是安全模型。保持本地化、可审查。 |
+
+### 可观测性的具体体现
+
+1. **核心循环完全可见**：`user → LLM → tool call → tool result → LLM → done`，不隐藏任何复杂性。
+2. **工具调用流式可见**：终端聊天中工具调用是流式输出的，用户能看到每一步。
+3. **手动上下文控制**：提供 `/history`、`/keep`、`/drop`、`/set`、`/save`、`/load` 等命令，让用户可以随时检查、裁剪、保存和重写模型收到的精确上下文。
+4. **Trace Viewer（追踪查看器）**：`/save` 将当前上下文保存为 JSON，再用 `mini-code-agent-trace` 渲染成静态 HTML 报告，展示消息形状、工具调用、工具结果、长/截断内容、失败工具和重复命令模式。**这个工具专门用于比较不同 harness 设计下模型实际收到的上下文差异**。
+
+### 总结
+
+该项目认为 **harness（代理框架）的核心价值不是隐藏复杂性，而是让代理足够可理解，以至于能在运行时调试它**。所有设计决策都优先保证可观测性：用文件代替隐藏状态，用可见的工具调用代替黑盒子代理，用可导出的上下文快照代替不可审查的内部逻辑。</pre>
+    </details>
+    
+
+    <details class="message user">
+      <summary>
+        <span class="index">[5]</span>
+        <span class="role">user</span>
+        <span class="summary-text">Now inspect pyproject.toml and src/mini_code_agent/session.py. Explain why the saved context from /save is useful for offline trace analysis, and name two limitations. Use tools be...</span>
+        <span class="meta">195 chars · 1 lines</span>
+        
+      </summary>
+      
+      
+      <pre class="content">Now inspect pyproject.toml and src/mini_code_agent/session.py. Explain why the saved context from /save is useful for offline trace analysis, and name two limitations. Use tools before answering.</pre>
+    </details>
+    
+
+    <details class="message assistant">
+      <summary>
+        <span class="index">[6]</span>
+        <span class="role">assistant</span>
+        <span class="summary-text">{&quot;tool&quot;:&quot;read&quot;,&quot;args&quot;:{&quot;path&quot;:&quot;pyproject.toml&quot;}}</span>
+        <span class="meta">48 chars · 1 lines</span>
+        
+      </summary>
+      
+    <div class="tool-card">
+      <div class="tool-head"><span class="pill tool">read</span><span>tool call</span></div>
+      <pre>{
+  &quot;path&quot;: &quot;pyproject.toml&quot;
+}</pre>
+    </div>
+    
+      
+      <pre class="content">{&quot;tool&quot;:&quot;read&quot;,&quot;args&quot;:{&quot;path&quot;:&quot;pyproject.toml&quot;}}</pre>
+    </details>
+    
+
+    <details class="message user">
+      <summary>
+        <span class="index">[7]</span>
+        <span class="role">user</span>
+        <span class="summary-text">Tool results: read (ok): C:\Users\Xiang\Documents\New project\pyproject.toml [project] name = &quot;mini-code-agent&quot; version = &quot;0.2.0&quot; description = &quot;A tiny streaming DeepSeek code agen...</span>
+        <span class="meta">626 chars · 29 lines</span>
+        
+      </summary>
+      
+      
+    <div class="tool-card ok">
+      <div class="tool-head"><span class="pill ok">ok</span><span>read result</span></div>
+      <pre>C:\Users\Xiang\Documents\New project\pyproject.toml
+
+[project]
+name = &quot;mini-code-agent&quot;
+version = &quot;0.2.0&quot;
+description = &quot;A tiny streaming DeepSeek code agent with a framed terminal UI.&quot;
+requires-python = &quot;&gt;=3.10&quot;
+dependencies = [&quot;prompt_toolkit&gt;=3.0.52&quot;, &quot;rich&gt;=13.0.0&quot;]
+
+[project.scripts]
+mini-code-agent = &quot;mini_code_agent.app:main&quot;
+mini-code-agent-trace = &quot;trace_analysis.viewer:main&quot;
+
+[build-system]
+requires = [&quot;setuptools&gt;=68&quot;]
+build-backend = &quot;setuptools.build_meta&quot;
+
+[tool.setuptools]
+package-dir = {&quot;&quot; = &quot;src&quot;}
+
+[tool.setuptools.packages.find]
+where = [&quot;src&quot;]
+
+[tool.ruff]
+line-length = 120</pre>
+    </div>
+    
+      <pre class="content">Tool results:
+
+read (ok):
+C:\Users\Xiang\Documents\New project\pyproject.toml
+
+[project]
+name = &quot;mini-code-agent&quot;
+version = &quot;0.2.0&quot;
+description = &quot;A tiny streaming DeepSeek code agent with a framed terminal UI.&quot;
+requires-python = &quot;&gt;=3.10&quot;
+dependencies = [&quot;prompt_toolkit&gt;=3.0.52&quot;, &quot;rich&gt;=13.0.0&quot;]
+
+[project.scripts]
+mini-code-agent = &quot;mini_code_agent.app:main&quot;
+mini-code-agent-trace = &quot;trace_analysis.viewer:main&quot;
+
+[build-system]
+requires = [&quot;setuptools&gt;=68&quot;]
+build-backend = &quot;setuptools.build_meta&quot;
+
+[tool.setuptools]
+package-dir = {&quot;&quot; = &quot;src&quot;}
+
+[tool.setuptools.packages.find]
+where = [&quot;src&quot;]
+
+[tool.ruff]
+line-length = 120
+</pre>
+    </details>
+    
+
+    <details class="message assistant">
+      <summary>
+        <span class="index">[8]</span>
+        <span class="role">assistant</span>
+        <span class="summary-text">{&quot;tool&quot;:&quot;read&quot;,&quot;args&quot;:{&quot;path&quot;:&quot;src/mini_code_agent/session.py&quot;}}</span>
+        <span class="meta">64 chars · 1 lines</span>
+        
+      </summary>
+      
+    <div class="tool-card">
+      <div class="tool-head"><span class="pill tool">read</span><span>tool call</span></div>
+      <pre>{
+  &quot;path&quot;: &quot;src/mini_code_agent/session.py&quot;
+}</pre>
+    </div>
+    
+      
+      <pre class="content">{&quot;tool&quot;:&quot;read&quot;,&quot;args&quot;:{&quot;path&quot;:&quot;src/mini_code_agent/session.py&quot;}}</pre>
+    </details>
+    
+
+    <details class="message user" open>
+      <summary>
+        <span class="index">[9]</span>
+        <span class="role">user</span>
+        <span class="summary-text">Tool results: read (ok): C:\Users\Xiang\Documents\New project\src\mini_code_agent\session.py from __future__ import annotations import json import queue import re import sys import...</span>
+        <span class="meta">8052 chars · 215 lines</span>
+        <span class="pill warn">long</span><span class="pill warn">truncated</span><span class="pill warn">timeout</span><span class="pill warn">error</span>
+      </summary>
+      
+      
+    <div class="tool-card ok">
+      <div class="tool-head"><span class="pill ok">ok</span><span>read result</span></div>
+      <pre>C:\Users\Xiang\Documents\New project\src\mini_code_agent\session.py
+
+from __future__ import annotations
+
+import json
+import queue
+import re
+import sys
+import threading
+from pathlib import Path
+from typing import Any
+
+from .api import DeepSeekClient
+from .config import Config
+from .models import Message, ToolResult, Usage
+from .prompt import SYSTEM_PROMPT
+from .tools import LocalTools, compact
+from . import ui
+
+
+class Session:
+    def __init__(self, config: Config):
+        self.config = config
+        self.client = DeepSeekClient(config)
+        self.tools = LocalTools(config)
+        self.messages: list[Message] = [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: SYSTEM_PROMPT}]
+        self.history: list[str] = []
+
+    def resolve_context_path(self, path: str | None = None) -&gt; Path:
+        if not path:
+            return self.config.context_path
+        p = Path(path).expanduser()
+        if not p.is_absolute():
+            p = self.config.root / p
+        return p.resolve()
+
+    def save(self, path: str | None = None) -&gt; str:
+        context_path = self.resolve_context_path(path)
+        payload = {&quot;model&quot;: self.config.model, &quot;messages&quot;: self.messages, &quot;history&quot;: self.history}
+        context_path.parent.mkdir(parents=True, exist_ok=True)
+        context_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+        return f&quot;saved {context_path}&quot;
+
+    def load(self) -&gt; str:
+        if not self.config.context_path.exists():
+            return f&quot;missing {self.config.context_path}&quot;
+        payload = json.loads(self.config.context_path.read_text(encoding=&quot;utf-8&quot;))
+        self.messages = payload.get(&quot;messages&quot;, self.messages)
+        self.history = payload.get(&quot;history&quot;, self.history)
+        return f&quot;loaded {self.config.context_path}&quot;
+
+    def context_lines(self) -&gt; list[str]:
+        lines = []
+        for i, msg in enumerate(self.messages):
+            content = msg[&quot;content&quot;].replace(&quot;\r\n&quot;, &quot;\n&quot;).strip()
+            lines.append(f&quot;[{i}] {msg[&#x27;role&#x27;]}\n{content}&quot;)
+        return lines
+
+    def edit_history(self, title: str) -&gt; None:
+        deleted = ui.interactive_history(title, self.context_lines(), locked_indices={0})
+        if not deleted:
+            return
+        removed: list[str] = []
+        for index in sorted(deleted, reverse=True):
+            if index &lt;= 0 or index &gt;= len(self.messages):
+                continue
+            role = self.messages[index][&quot;role&quot;]
+            self.messages.pop(index)
+            removed.append(f&quot;[{index}] {role}&quot;)
+        if removed:
+            ui.status(&quot;dropped &quot; + &quot;, &quot;.join(reversed(removed)))
+
+    def drop_message(self, index: int) -&gt; str:
+        if index == 0:
+            return &quot;refusing to drop system message; use /system to edit it&quot;
+        if index &lt; 0 or index &gt;= len(self.messages):
+            return f&quot;message index out of range: {index}&quot;
+        removed = self.messages.pop(index)
+        return f&quot;dropped [{index}] {removed[&#x27;role&#x27;]}&quot;
+
+    def set_message(self, index: int, content: str) -&gt; str:
+        if index &lt; 0 or index &gt;= len(self.messages):
+            return f&quot;message index out of range: {index}&quot;
+        if not content:
+            return &quot;empty content ignored&quot;
+        self.messages[index][&quot;content&quot;] = content
+        return f&quot;updated [{index}] {self.messages[index][&#x27;role&#x27;]}&quot;
+
+    def set_system(self, content: str) -&gt; str:
+        if not content:
+            return &quot;empty system prompt ignored&quot;
+        self.messages[0] = {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: content}
+        return &quot;system prompt updated&quot;
+
+    def parse_tool_call(self, text: str) -&gt; tuple[str, dict[str, Any]] | None:
+        cleaned = text.strip()
+        cleaned = re.sub(r&quot;^```(?:json)?\s*|\s*```$&quot;, &quot;&quot;, cleaned, flags=re.IGNORECASE | re.DOTALL).strip()
+        try:
+            obj = json.loads(cleaned)
+        except json.JSONDecodeError:
+            return None
+        if isinstance(obj, dict) and isinstance(obj.get(&quot;tool&quot;), str) and isinstance(obj.get(&quot;args&quot;), dict):
+            return obj[&quot;tool&quot;], obj[&quot;args&quot;]
+        return None
+
+    def parse_tool_calls(self, text: str) -&gt; list[tuple[str, dict[str, Any]]]:
+        direct = self.parse_tool_call(text)
+        if direct:
+            return [direct]
+
+        calls: list[tuple[str, dict[str, Any]]] = []
+        for match in re.finditer(
+            r&quot;&lt;tool_call\s+name=[\&quot;&#x27;](?P&lt;name&gt;[a-zA-Z_][\w-]*)[\&quot;&#x27;]\s*&gt;(?P&lt;body&gt;.*?)&lt;/tool_call&gt;&quot;,
+            text,
+            flags=re.DOTALL,
+        ):
+            try:
+                obj = json.loads(match.group(&quot;body&quot;).strip())
+            except json.JSONDecodeError:
+                continue
+            if isinstance(obj, dict):
+                calls.append((match.group(&quot;name&quot;), self.normalize_tool_args(match.group(&quot;name&quot;), obj)))
+
+        decoder = json.JSONDecoder()
+        index = 0
+        while index &lt; len(text):
+            start = text.find(&quot;{&quot;, index)
+            if start == -1:
+                break
+            try:
+                obj, end = decoder.raw_decode(text[start:])
+            except json.JSONDecodeError:
+                index = start + 1
+                continue
+            if isinstance(obj, dict) and isinstance(obj.get(&quot;tool&quot;), str) and isinstance(obj.get(&quot;args&quot;), dict):
+                calls.append((obj[&quot;tool&quot;], obj[&quot;args&quot;]))
+            index = start + max(end, 1)
+        return calls
+
+    def normalize_tool_args(self, name: str, obj: dict[str, Any]) -&gt; dict[str, Any]:
+        if name == &quot;bash&quot; and isinstance(obj.get(&quot;command&quot;), str):
+            return {&quot;command&quot;: obj[&quot;command&quot;]}
+        if isinstance(obj.get(&quot;args&quot;), dict):
+            return obj[&quot;args&quot;]
+        if name == &quot;read&quot; and isinstance(obj.get(&quot;path&quot;), str):
+            return {&quot;path&quot;: obj[&quot;path&quot;]}
+        if name == &quot;write&quot; and isinstance(obj.get(&quot;path&quot;), str):
+            return {&quot;path&quot;: obj[&quot;path&quot;], &quot;content&quot;: str(obj.get(&quot;content&quot;, &quot;&quot;))}
+        if name == &quot;edit&quot; and isinstance(obj.get(&quot;path&quot;), str):
+            return {
+                &quot;path&quot;: obj[&quot;path&quot;],
+                &quot;old&quot;: str(obj.get(&quot;old&quot;, &quot;&quot;)),
+                &quot;new&quot;: str(obj.get(&quot;new&quot;, &quot;&quot;)),
+                &quot;replace_all&quot;: bool(obj.get(&quot;replace_all&quot;, False)),
+            }
+        return obj
+
+    def stream_once(self, usage_total: Usage) -&gt; str:
+        chunks: list[str] = []
+        mode: str | None = None
+        pending = &quot;&quot;
+        spin = ui.Spinner()
+        spin.start()
+        try:
+            for text, usage in self.client.stream_chat(self.messages):
+                if usage:
+                    usage_total.add(usage)
+                if not text:
+                    continue
+                chunks.append(text)
+                if mode == &quot;silent&quot;:
+                    continue
+                if mode == &quot;print&quot;:
+                    print(text, end=&quot;&quot;, flush=True)
+                    continue
+
+                pending += text
+                stripped = pending.lstrip()
+                if not stripped:
+                    continue
+                spin.stop()
+                if stripped[0] == &quot;{&quot;:
+                    mode = &quot;silent&quot;
+                    continue
+                mode = &quot;print&quot;
+                ui.assistant_start()
+                print(pending, end=&quot;&quot;, flush=True)
+        except Exception:
+            if mode == &quot;print&quot;:
+                print(flush=True)
+            raise
+        finally:
+            spin.stop()
+        if mode == &quot;print&quot;:
+            print(flush=True)
+        return &quot;&quot;.join(chunks)
+
+    def run_tool_with_timeout(self, name: str, args: dict[str, Any]) -&gt; ToolResult:
+        results: queue.Queue[ToolResult] = queue.Queue(maxsize=1)
+
+        def invoke() -&gt; None:
+            try:
+                result = self.tools.run(name, args)
+            except Exception as exc:
+                result = ToolResult(False, f&quot;Tool crashed: {type(exc).__name__}: {exc}&quot;)
+            try:
+                results.put_nowait(result)
+            except queue.Full:
+                pass
+
+        thread = threading.Thread(target=invoke, name=f&quot;tool:{name}&quot;, daemon=Tr
+...[truncated 4459 chars]</pre>
+    </div>
+    
+      <pre class="content">Tool results:
+
+read (ok):
+C:\Users\Xiang\Documents\New project\src\mini_code_agent\session.py
+
+from __future__ import annotations
+
+import json
+import queue
+import re
+import sys
+import threading
+from pathlib import Path
+from typing import Any
+
+from .api import DeepSeekClient
+from .config import Config
+from .models import Message, ToolResult, Usage
+from .prompt import SYSTEM_PROMPT
+from .tools import LocalTools, compact
+from . import ui
+
+
+class Session:
+    def __init__(self, config: Config):
+        self.config = config
+        self.client = DeepSeekClient(config)
+        self.tools = LocalTools(config)
+        self.messages: list[Message] = [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: SYSTEM_PROMPT}]
+        self.history: list[str] = []
+
+    def resolve_context_path(self, path: str | None = None) -&gt; Path:
+        if not path:
+            return self.config.context_path
+        p = Path(path).expanduser()
+        if not p.is_absolute():
+            p = self.config.root / p
+        return p.resolve()
+
+    def save(self, path: str | None = None) -&gt; str:
+        context_path = self.resolve_context_path(path)
+        payload = {&quot;model&quot;: self.config.model, &quot;messages&quot;: self.messages, &quot;history&quot;: self.history}
+        context_path.parent.mkdir(parents=True, exist_ok=True)
+        context_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+        return f&quot;saved {context_path}&quot;
+
+    def load(self) -&gt; str:
+        if not self.config.context_path.exists():
+            return f&quot;missing {self.config.context_path}&quot;
+        payload = json.loads(self.config.context_path.read_text(encoding=&quot;utf-8&quot;))
+        self.messages = payload.get(&quot;messages&quot;, self.messages)
+        self.history = payload.get(&quot;history&quot;, self.history)
+        return f&quot;loaded {self.config.context_path}&quot;
+
+    def context_lines(self) -&gt; list[str]:
+        lines = []
+        for i, msg in enumerate(self.messages):
+            content = msg[&quot;content&quot;].replace(&quot;\r\n&quot;, &quot;\n&quot;).strip()
+            lines.append(f&quot;[{i}] {msg[&#x27;role&#x27;]}\n{content}&quot;)
+        return lines
+
+    def edit_history(self, title: str) -&gt; None:
+        deleted = ui.interactive_history(title, self.context_lines(), locked_indices={0})
+        if not deleted:
+            return
+        removed: list[str] = []
+        for index in sorted(deleted, reverse=True):
+            if index &lt;= 0 or index &gt;= len(self.messages):
+                continue
+            role = self.messages[index][&quot;role&quot;]
+            self.messages.pop(index)
+            removed.append(f&quot;[{index}] {role}&quot;)
+        if removed:
+            ui.status(&quot;dropped &quot; + &quot;, &quot;.join(reversed(removed)))
+
+    def drop_message(self, index: int) -&gt; str:
+        if index == 0:
+            return &quot;refusing to drop system message; use /system to edit it&quot;
+        if index &lt; 0 or index &gt;= len(self.messages):
+            return f&quot;message index out of range: {index}&quot;
+        removed = self.messages.pop(index)
+        return f&quot;dropped [{index}] {removed[&#x27;role&#x27;]}&quot;
+
+    def set_message(self, index: int, content: str) -&gt; str:
+        if index &lt; 0 or index &gt;= len(self.messages):
+            return f&quot;message index out of range: {index}&quot;
+        if not content:
+            return &quot;empty content ignored&quot;
+        self.messages[index][&quot;content&quot;] = content
+        return f&quot;updated [{index}] {self.messages[index][&#x27;role&#x27;]}&quot;
+
+    def set_system(self, content: str) -&gt; str:
+        if not content:
+            return &quot;empty system prompt ignored&quot;
+        self.messages[0] = {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: content}
+        return &quot;system prompt updated&quot;
+
+    def parse_tool_call(self, text: str) -&gt; tuple[str, dict[str, Any]] | None:
+        cleaned = text.strip()
+        cleaned = re.sub(r&quot;^```(?:json)?\s*|\s*```$&quot;, &quot;&quot;, cleaned, flags=re.IGNORECASE | re.DOTALL).strip()
+        try:
+            obj = json.loads(cleaned)
+        except json.JSONDecodeError:
+            return None
+        if isinstance(obj, dict) and isinstance(obj.get(&quot;tool&quot;), str) and isinstance(obj.get(&quot;args&quot;), dict):
+            return obj[&quot;tool&quot;], obj[&quot;args&quot;]
+        return None
+
+    def parse_tool_calls(self, text: str) -&gt; list[tuple[str, dict[str, Any]]]:
+        direct = self.parse_tool_call(text)
+        if direct:
+            return [direct]
+
+        calls: list[tuple[str, dict[str, Any]]] = []
+        for match in re.finditer(
+            r&quot;&lt;tool_call\s+name=[\&quot;&#x27;](?P&lt;name&gt;[a-zA-Z_][\w-]*)[\&quot;&#x27;]\s*&gt;(?P&lt;body&gt;.*?)&lt;/tool_call&gt;&quot;,
+            text,
+            flags=re.DOTALL,
+        ):
+            try:
+                obj = json.loads(match.group(&quot;body&quot;).strip())
+            except json.JSONDecodeError:
+                continue
+            if isinstance(obj, dict):
+                calls.append((match.group(&quot;name&quot;), self.normalize_tool_args(match.group(&quot;name&quot;), obj)))
+
+        decoder = json.JSONDecoder()
+        index = 0
+        while index &lt; len(text):
+            start = text.find(&quot;{&quot;, index)
+            if start == -1:
+                break
+            try:
+                obj, end = decoder.raw_decode(text[start:])
+            except json.JSONDecodeError:
+                index = start + 1
+                continue
+            if isinstance(obj, dict) and isinstance(obj.get(&quot;tool&quot;), str) and isinstance(obj.get(&quot;args&quot;), dict):
+                calls.append((obj[&quot;tool&quot;], obj[&quot;args&quot;]))
+            index = start + max(end, 1)
+        return calls
+
+    def normalize_tool_args(self, name: str, obj: dict[str, Any]) -&gt; dict[str, Any]:
+        if name == &quot;bash&quot; and isinstance(obj.get(&quot;command&quot;), str):
+            return {&quot;command&quot;: obj[&quot;command&quot;]}
+        if isinstance(obj.get(&quot;args&quot;), dict):
+            return obj[&quot;args&quot;]
+        if name == &quot;read&quot; and isinstance(obj.get(&quot;path&quot;), str):
+            return {&quot;path&quot;: obj[&quot;path&quot;]}
+        if name == &quot;write&quot; and isinstance(obj.get(&quot;path&quot;), str):
+            return {&quot;path&quot;: obj[&quot;path&quot;], &quot;content&quot;: str(obj.get(&quot;content&quot;, &quot;&quot;))}
+        if name == &quot;edit&quot; and isinstance(obj.get(&quot;path&quot;), str):
+            return {
+                &quot;path&quot;: obj[&quot;path&quot;],
+                &quot;old&quot;: str(obj.get(&quot;old&quot;, &quot;&quot;)),
+                &quot;new&quot;: str(obj.get(&quot;new&quot;, &quot;&quot;)),
+                &quot;replace_all&quot;: bool(obj.get(&quot;replace_all&quot;, False)),
+            }
+        return obj
+
+    def stream_once(self, usage_total: Usage) -&gt; str:
+        chunks: list[str] = []
+        mode: str | None = None
+        pending = &quot;&quot;
+        spin = ui.Spinner()
+        spin.start()
+        try:
+            for text, usage in self.client.stream_chat(self.messages):
+                if usage:
+                    usage_total.add(usage)
+                if not text:
+                    continue
+                chunks.append(text)
+                if mode == &quot;silent&quot;:
+                    continue
+                if mode == &quot;print&quot;:
+                    print(text, end=&quot;&quot;, flush=True)
+                    continue
+
+                pending += text
+                stripped = pending.lstrip()
+                if not stripped:
+                    continue
+                spin.stop()
+                if stripped[0] == &quot;{&quot;:
+                    mode = &quot;silent&quot;
+                    continue
+                mode = &quot;print&quot;
+                ui.assistant_start()
+                print(pending, end=&quot;&quot;, flush=True)
+        except Exception:
+            if mode == &quot;print&quot;:
+                print(flush=True)
+            raise
+        finally:
+            spin.stop()
+        if mode == &quot;print&quot;:
+            print(flush=True)
+        return &quot;&quot;.join(chunks)
+
+    def run_tool_with_timeout(self, name: str, args: dict[str, Any]) -&gt; ToolResult:
+        results: queue.Queue[ToolResult] = queue.Queue(maxsize=1)
+
+        def invoke() -&gt; None:
+            try:
+                result = self.tools.run(name, args)
+            except Exception as exc:
+                result = ToolResult(False, f&quot;Tool crashed: {type(exc).__name__}: {exc}&quot;)
+            try:
+                results.put_nowait(result)
+            except queue.Full:
+                pass
+
+        thread = threading.Thread(target=invoke, name=f&quot;tool:{name}&quot;, daemon=Tr
+...[truncated 4459 chars]</pre>
+    </details>
+    
+
+    <details class="message assistant">
+      <summary>
+        <span class="index">[10]</span>
+        <span class="role">assistant</span>
+        <span class="summary-text">## 为什么 `/save` 保存的上下文对离线追踪分析有用 从 `session.py` 的 `save` 方法可以看到，保存的 JSON 包含三个字段： ```python payload = {&quot;model&quot;: config.model, &quot;messages&quot;: self.messages, &quot;history&quot;: self.history} ``` 1...</span>
+        <span class="meta">898 chars · 23 lines</span>
+        
+      </summary>
+      
+      
+      <pre class="content">## 为什么 `/save` 保存的上下文对离线追踪分析有用
+
+从 `session.py` 的 `save` 方法可以看到，保存的 JSON 包含三个字段：
+
+```python
+payload = {&quot;model&quot;: config.model, &quot;messages&quot;: self.messages, &quot;history&quot;: self.history}
+```
+
+1. **`messages`** — 模型实际收到的完整消息列表（system + user + assistant + tool_result），这是离线分析的核心数据。Trace Viewer 可以据此重建每一步的输入输出，包括工具调用的 JSON 格式、工具结果的内容、以及长文本是否被截断。
+
+2. **`model`** — 记录当时使用的模型名称，方便对比不同模型在同一任务上的行为差异。
+
+3. **`history`** — 记录用户输入的历史文本，帮助分析用户与代理的交互模式。
+
+这些数据被保存为纯 JSON 文件，不依赖任何运行时状态，因此可以：
+- 跨会话共享和对比（README 明确说 &quot;comparing harness design changes through the context the model actually received&quot;）
+- 用 `mini-code-agent-trace` 渲染成静态 HTML 报告，离线审查工具调用顺序、失败模式、重复命令等
+
+## 两个局限性
+
+1. **不包含工具执行结果的成功/失败状态** — `messages` 中只保存了工具返回的文本内容（作为 `tool_result` 角色的消息），但没有单独的结构化字段标记工具是否执行成功、执行耗时、或异常堆栈。Trace Viewer 需要从文本内容中推断工具是否失败。
+
+2. **不包含流式输出的中间状态** — 保存的是最终稳定的 `messages` 列表，而流式输出过程中模型可能产生多个候选工具调用、被截断的中间文本、或用户中断时的部分输出，这些动态信息在保存的快照中丢失了。</pre>
+    </details>
+    
+  </section>
+</main>
+<script>
+const filter = document.getElementById('filter');
+const messages = Array.from(document.querySelectorAll('.message'));
+filter.addEventListener('input', () => {
+  const q = filter.value.trim().toLowerCase();
+  for (const el of messages) {
+    el.classList.toggle('hidden', q && !el.innerText.toLowerCase().includes(q));
+  }
+});
+</script>
+</body>
+</html>

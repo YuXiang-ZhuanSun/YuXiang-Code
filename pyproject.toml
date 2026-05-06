@@ -7,6 +7,7 @@ dependencies = ["prompt_toolkit>=3.0.52", "rich>=13.0.0"]
 
 [project.scripts]
 mini-code-agent = "mini_code_agent.app:main"
+mini-code-agent-trace = "trace_analysis.viewer:main"
 
 [build-system]
 requires = ["setuptools>=68"]

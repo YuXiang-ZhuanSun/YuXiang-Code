@@ -384,7 +384,7 @@ def help_text() -> str:
   /drop INDEX        remove one context message
   /set INDEX text    replace one context message
   /system text       replace the system prompt
-  /save              save context to .agent_context.json
+  /save [path]       save context to .agent_context.json or a custom path
   /load              load context from .agent_context.json
   /model [name]      show or change model
   /exit              quit

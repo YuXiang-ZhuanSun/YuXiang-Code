@@ -15,3 +15,9 @@
 !/src/
 !/src/mini_code_agent/
 !/src/mini_code_agent/*.py
+!/src/trace_analysis/
+!/src/trace_analysis/*.py
+
+!/examples/
+!/examples/trace/
+!/examples/trace/*
